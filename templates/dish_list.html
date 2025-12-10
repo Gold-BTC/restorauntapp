@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Список страв</h2>
+
+                <button type="button" class="btn btn-primary position-absolute top-0 end-0 m-3"  data-bs-toggle="modal" data-bs-target="#staticBackdrop">Кошик</button>
+
+<div>
+    {% for dish in dishes %}
+        <div class="card" style="width: 18rem;">
+            {% if dish.photo %}
+                <img src="{{dish.photo.url}}" class="card-img-top">
+            {% endif %}
+
+        <div class="card-body">
+            <h5 class="card-title">{{dish.title}}</h5>
+            <p class="card-text">{{dish.description}}</p>
+            <p class="card-primary">{{dish.price}} грн</p>
+            <form action="" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="dish_id" value="{{dish.id}}">
+                <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Замовити</button>
+            </form>
+
+        </div>
+        </div>
+    {% endfor %}
+
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Кошик</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% for item in cart_items %}
+                        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    {% if item.photo %}
+                        <img src="{{item.photo.url}}" class="img-fluid rounded-start" alt="...">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{item.title}}</h5>
+                    <p class="card-text">{{item.quantity}}шт. x {{item.price}} грн</p>
+                </div>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <h5 class="me-auto">Всього {{total_price}} грн</h5>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">закрити</button>
+        <a type="button" class="btn btn-primary">Оформити замовлення</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% if show_cart %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var cartModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+        cartModal.show();
+    });
+    </script>
+{% endif %}
+
+
+
+{% endblock %}
